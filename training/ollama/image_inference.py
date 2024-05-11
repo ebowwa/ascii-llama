@@ -88,6 +88,5 @@ image_path = "/Users/wentingwang/Downloads/aa9ae569.jpeg"
 f = open(image_path, "rb")
 image_content = f.read()
 image_content_encoded = base64.b64encode(image_content).decode('ascii')
-print("decode", type(image_content_encoded))
 images = [image_content_encoded]
 generate_image(model, prompt, images)
