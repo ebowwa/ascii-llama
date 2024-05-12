@@ -1,16 +1,15 @@
 // src/components/ModelMetadata.tsx
 "use client"
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { Canvas, useLoader } from '@react-three/fiber';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import { useGLTF } from '@react-three/drei';
 
 interface ModelMetadataProps {
   modelPath: string;
 }
 
 const ModelLoader: React.FC<ModelMetadataProps> = ({ modelPath }) => {
-  const { nodes, materials, scene, animations } = useGLTF(modelPath);
+  const { nodes, materials, scene, animations } = useLoader(GLTFLoader, modelPath);
 
   useEffect(() => {
     console.log('Model Metadata:');

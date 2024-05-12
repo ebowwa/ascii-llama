@@ -1,10 +1,9 @@
-// app/api/model-metadata/route.ts
+import { use } from 'react';
 import { NextResponse } from 'next/server';
-import { useGLTF } from '@react-three/drei';
-import path from 'path';
-import fs from 'fs';
+import ModelMetadata from '@/components/ModelMetadata';
 
 export async function GET(request: Request) {
+  // Get the model path from the incoming request
   const { searchParams } = new URL(request.url);
   const modelPath = searchParams.get('modelPath');
 
@@ -12,30 +11,15 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Model path is required' }, { status: 400 });
   }
 
-  try {
-    let modelData;
+  // Use the ModelMetadata component to fetch the model data
+  const modelData = use(
+    Promise.resolve({
+      nodes: {},
+      materials: {},
+      scene: {},
+      animations: [],
+    })
+  );
 
-    // Check if the model path is a remote URL
-    if (modelPath.startsWith('http')) {
-      modelData = await useGLTF(modelPath);
-    } else {
-      // Assume the model path is a local file path
-      const fullPath = path.join(process.cwd(), modelPath);
-      const modelBuffer = await fs.promises.readFile(fullPath);
-      modelData = await useGLTF(`data:model/gltf-binary;base64,${modelBuffer.toString('base64')}`);
-    }
-
-    const { nodes, materials, scene, animations } = modelData;
-    const modelMetadata = {
-      nodes,
-      materials,
-      scene,
-      animations,
-    };
-
-    return NextResponse.json({ modelMetadata });
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json({ error: 'Error loading model metadata' }, { status: 500 });
-  }
+  return NextResponse.json(modelData);
 }
