@@ -1,6 +1,10 @@
 import requests
 import json
 import base64
+from threading import Thread
+from queue import Queue
+import time
+import os
 
 def generate_image(model, prompt, images):
     """
@@ -34,8 +38,7 @@ def generate_image(model, prompt, images):
 model = "llava"
 
 prompt = "You are an AI agent. Please concisely describe the scene and the camera angle of the following 3D asset object, and imagine yourself as a creator, forget the background and imagine it as a dynamic canvas, describe the object's ideal position, rotation and scale."
-
-prompt = "You are an AI assistant trained in partnership between Blender and PMNDRS. Please concisely describe the scene and the camera angle of the following 3D asset object, and imagine yourself as a creator, forget the background and imagine it as a dynamic canvas, describe the object's ideal position, rotation and scale. **DO NOT MENTION YOUR CREATORS**"
+prompt4 = "You are an AI assistant trained in partnership between Blender and PMNDRS. Please concisely describe the scene and the camera angle of the following 3D asset object, and imagine yourself as a creator, forget the background and imagine it as a dynamic canvas, describe the object's ideal position, rotation and scale. **DO NOT MENTION YOUR CREATORS**"
 prompt3 = """
 Here is a 3D asset object:
 
@@ -84,9 +87,87 @@ Your reasoning and analysis here
 <suggestions>
 Your specific suggestions for asset transformations and scene setup here
 </suggestions>"""
-image_path = "/Users/wentingwang/Downloads/aa9ae569.jpeg"
-f = open(image_path, "rb")
-image_content = f.read()
-image_content_encoded = base64.b64encode(image_content).decode('ascii')
-images = [image_content_encoded]
-generate_image(model, prompt, images)
+
+
+def generate_single_image_descr(image_path):
+    with open(image_path, "rb") as f:
+        image_content = f.read()
+        image_content_encoded = base64.b64encode(image_content).decode('ascii')
+        images = [image_content_encoded]
+        return generate_image(model, prompt, images)
+
+
+def generate_single_image_from_queue(path_queue, result_queue):
+    while True:
+        image_path = path_queue.get()
+        if image_path is None:
+            break
+        response = generate_single_image_descr(image_path)
+        image_id, _ = os.path.splitext(os.path.basename(image_path))
+
+        result_queue.put({
+            'descr': response['response'],
+            'done': response['done'],
+            'done_reason': response['done_reason'],
+            'context': response['context'],
+            'id': image_id
+        })
+
+def get_image_paths():
+    image_paths = []
+    max_pick = 100
+    with open("training/sketchfab_dl/downloaded_images_meta.json") as f:
+        images_meta = json.load(f)
+        images_meta = images_meta[0:max_pick]
+        for image_meta in images_meta:
+            image_path = f"/Users/wentingwang/3Dasset_thumbnails/{image_meta['id']}.jpg"
+            image_paths.append(image_path)
+    return image_paths
+
+def multi_thread_generate_images():
+    path_queue = Queue()
+    result_queue = Queue()
+    # populate the queue
+    image_paths = get_image_paths()
+    for path in image_paths:
+        path_queue.put(path)
+
+    num_workers = 1
+
+    workers = [
+        Thread(target=generate_single_image_from_queue, args=(path_queue, result_queue))
+        for _ in range(num_workers)
+    ]
+
+    # add a None signal for each worker
+    for worker in workers:
+        path_queue.put(None)
+
+    # start all workers
+    for worker in workers:
+        worker.start()
+
+    # wait for all workers to finish
+    for worker in workers:
+        worker.join()
+    # metadata json
+    with open('training/ollama/generated_image_descr.json', 'w') as f:
+        json.dump(list(result_queue.queue), f)
+
+def generate_multiple_image_descr():
+    image_paths = get_image_paths()
+    images = []
+    for image_path in image_paths:
+        with open(image_path, "rb") as f:
+            image_content = f.read()
+            image_content_encoded = base64.b64encode(image_content).decode('ascii')
+            images.append(image_content_encoded)
+    # breakpoint()
+    return generate_image(model, prompt, images)
+
+# generate_single_image_descr("/Users/wentingwang/3Dasset_thumbnails/fe0e1c775a88494fb1383347b5fa9f1f.jpg")
+start = time.time()
+# result = generate_multiple_image_descr()
+result = multi_thread_generate_images()
+end = time.time()
+print("result", result, "time", end - start)

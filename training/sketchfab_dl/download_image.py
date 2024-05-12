@@ -99,4 +99,4 @@ def gen_image_info_json():
         json.dump(images, f)
 
 download_image()
-# gen_image_info_json()
+gen_image_info_json()
