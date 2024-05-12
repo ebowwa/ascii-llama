@@ -1,5 +1,0 @@
-# Compiled Python files
-*.pyc
-__pycache__/
-llama_training/lib/python3.12/site-packages/certifi/cacert.pem
-llama_training
