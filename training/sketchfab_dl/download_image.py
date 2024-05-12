@@ -1,18 +1,19 @@
 import requests
 import json
 import xmltodict
-
+import os
+from pathlib import Path
 
 def dfs_target_users():
-    uids = ['820c0206d14d4c76a2aff53625bb1af8']
+    # uids = ['820c0206d14d4c76a2aff53625bb1af8'] # strisunshine
+    uids = ['e9db551b564149808335556d521a9f51'] # WirtualneMuzeaMalopolski
     target_users = {}
-    recurse_level = 2
+    recurse_level = 1
     while(recurse_level >= 0):
         new_uids = []
         for uid in uids:
             url = f"https://api.sketchfab.com/v3/users/{uid}/followings"
             response = requests.get(url)
-            # breakpoint()
             for user_info in response.json()['results']:
                 new_uid = user_info['uid']
                 if new_uid not in new_uids:
@@ -63,7 +64,7 @@ def get_thumb_image_infos():
 def download_image():
     thumb_image_info = get_thumb_image_infos()
     # thumb_image_info = {
-    #     '123': {
+    #     '128d863ab5c8467f80939cabe8b3fc34': {
     #         "thumb_url": "https://media.sketchfab.com/models/c269c1cbac29486b969f6a926612298e/thumbnails/2d40b6a2d45e439f963e7769d78d6978/10bceeaaad504b84be56a28ef6d4158e.jpeg",
     #         "size": 12345
     #     }
@@ -72,9 +73,30 @@ def download_image():
     for image_id, info in thumb_image_info.items():
         url = info['thumb_url']
         size = info['size']
-        print(f"{i}: downloading {image_id} from {url}")
         img_data = requests.get(url).content
-        with open(f'/Users/wentingwang/3Dasset_thumbnails/{image_id}.jpg', 'wb') as handler:
+        img_file_path = f'/Users/wentingwang/3Dasset_thumbnails/{image_id}.jpg'
+        i += 1
+        if Path(img_file_path).exists():
+            continue
+        print(f"{i}: downloading {image_id} from {url}")
+        with open(img_file_path, 'wb') as handler:
             handler.write(img_data)
 
+def gen_image_info_json():
+    images = []
+    for root, d_names, f_names  in os.walk("/Users/wentingwang/3Dasset_thumbnails/"):
+        for file in f_names:
+            image_id, ext = os.path.splitext(file)
+            stats = os.stat(f"{root}/{file}")
+            if ext == '.jpg':
+                images.append({
+                    "id": image_id,
+                    "size": stats.st_size,
+                })
+    images.sort(key=lambda x:x['size'], reverse = True)
+    print(f"there are total {len(images)} images")
+    with open('/Users/wentingwang/3Dasset_thumbnails/downloaded_images_meta.json', 'w') as f:
+        json.dump(images, f)
+
 download_image()
+# gen_image_info_json()
