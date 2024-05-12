@@ -3,7 +3,7 @@
 
 import { Canvas } from '@react-three/fiber'
 import { Preload } from '@react-three/drei'
-import { r3f } from '@/components/utility/helpers/studio/lib/global'
+import { r3f } from '@/components/lib/global'
 import * as THREE from 'three'
 
 export default function Scene({ ...props }) {
