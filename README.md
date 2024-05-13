@@ -20,12 +20,22 @@ To keep a unified source and a cleanly design we utilize two wedev frameworks
 - fastapi = http://localhost:7070 `#` our training server
 
 ## Training Targets:
+
 [ ]ASCII Scene Description: Just like Blender's scene hierarchy, the LLM could be trained to generate text that describes the structure and contents of a 3D ASCII scene. This could include the placement of ASCII characters, their sizes, orientations, and relationships to one another.
+
 [ ]ASCII Modeling Tools: The LLM could be trained to generate text-based commands or scripts that can be used to "model" 3D ASCII shapes and objects. This could involve learning the syntax and semantics of a custom ASCII modeling language, similar to Blender's scripting capabilities.
+
 [ ]ASCII Animation and Rigging: The LLM could be trained to generate text that describes the animation and rigging of 3D ASCII characters or objects. This could include specifying keyframes, bone structures, and other animation-related concepts in a textual format.
+
 [ ]ASCII Lighting and Materials: The LLM could be trained to generate text that sets the lighting, shading, and material properties of a 3D ASCII scene. This could involve learning how to translate high-level lighting and material concepts into the ASCII representation.
+
 [ ]ASCII Rendering and Compositing: The LLM could be trained to generate text that describes the rendering and compositing of a 3D ASCII scene, similar to how Blender allows users to configure render settings and compositing nodes.
+
 [ ]ASCII Project Management: The LLM could be trained to generate text that organizes and manages the creation of 3D ASCII content, such as project files, asset libraries, and version control systems.
+
 [ ]ASCII Visualization and Debugging: The LLM could be trained to generate text that helps visualize and debug 3D ASCII content, such as generating ASCII-based wireframes, normals, or other diagnostic information.
+
+
+initial training run | poor quality & limited finetuning data, the three asset model metadata was not integrated into training and input was not validated | strisunshine/Llama-3-cerebral-valley https://huggingface.co/strisunshine/Llama-3-cerebral-valley
 
 ## Platform Frontend
