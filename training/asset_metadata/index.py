@@ -1,5 +1,5 @@
 # training/AssetMetadata/index.py
-# 05/13/24
+# 05/13/24 eca
 
 import struct
 import json

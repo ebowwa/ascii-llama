@@ -1,8 +1,10 @@
-from training.AssetMetadata.index import extract_glb_metadata
+# eca 05/13/2024
+# training/index.py
+from asset_metadata.index import extract_glb_metadata
 
 def main():
     # Specify the path to the GLB file
-    glb_file_path = 'path/to/your/coin.glb'
+    glb_file_path = '/Users/ebowwa/ascii-llama/public/three_assets/Coin.glb'
 
     try:
         # Extract the metadata from the GLB file
