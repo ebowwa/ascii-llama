@@ -1,3 +1,6 @@
+# training/AssetMetadata/index.py
+# 05/13/24
+
 import struct
 import json
 
@@ -48,6 +51,6 @@ def extract_glb_metadata(file_path):
         }
 
         return metadata
-
+# example usage:
 # metadata = extract_glb_metadata('coin.glb')
 # print(metadata)
