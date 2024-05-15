@@ -3,7 +3,7 @@
 # Overview
 Welcome to NeuroScene, a revolutionary AI-powered 3D scene creation tool that's changing the game for creators and developers. As part of the Meta Cerebral Valley Hackathon, our team is pushing the boundaries of what's possible with AI-driven design.
 
-![alt text](https://file%2B.vscode-resource.vscode-cdn.net/Users/ebowwa/ascii-llama/public/GNjTh2zaYAABiaQ.jpg?version%3D1715751410836)
+![GNjTh2zaYAABiaQ](https://github.com/ebowwa/ascii-llama/assets/81942069/7d555ae0-6d7c-4318-86e2-e776ed9a7bb4)
 
 Our goal is to create an intuitive and efficient UI that enables users to create complex 3D scenes with ease. The NeuroScene AI engine will:
 
