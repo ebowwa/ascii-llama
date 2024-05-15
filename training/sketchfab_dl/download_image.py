@@ -1,3 +1,5 @@
+# The goal of this script was to download get data around 3d models i.e. image thumbnail data to then show to a llm to describe as well as to render in ascii
+# It is unseen, if this data procurement method is not likely to support a high quality training run. On the one hand ascii renderings have been seen to lead to new capabilities, of which potentially better results than vision encoders, however the quality and percision of the ascii data would likely be just as important. 
 import requests
 import json
 import xmltodict
@@ -5,29 +7,60 @@ import os
 from pathlib import Path
 
 def dfs_target_users():
+    # Define the initial target user IDs (UIDs) to start the search
+    # You can uncomment the other UID examples to search for different users
     # uids = ['820c0206d14d4c76a2aff53625bb1af8'] # strisunshine
     uids = ['e9db551b564149808335556d521a9f51'] # WirtualneMuzeaMalopolski
+
+    # Initialize an empty dictionary to store the target user information
     target_users = {}
+
+    # Set the initial recursion level
     recurse_level = 1
-    while(recurse_level >= 0):
+
+    # Start the depth-first search loop
+    while recurse_level >= 0:
+        # Initialize a list to store the new UIDs to be visited in the next iteration
         new_uids = []
+
+        # Iterate through the current UIDs
         for uid in uids:
+            # Construct the API URL to retrieve the followed users for the current UID
             url = f"https://api.sketchfab.com/v3/users/{uid}/followings"
+
+            # Make a GET request to the API and retrieve the response
             response = requests.get(url)
+
+            # Iterate through the results and collect the information about the followed users
             for user_info in response.json()['results']:
+                # Get the UID of the followed user
                 new_uid = user_info['uid']
+
+                # Add the new UID to the list of new UIDs, if it's not already there
                 if new_uid not in new_uids:
                     new_uids.append(new_uid)
+
+                # Add the followed user's information to the target_users dictionary
                 target_users[new_uid] = {
                     'username': user_info['username'],
                     'models_url': user_info['modelsUrl'],
                 }
+
+                # If the target_users dictionary has reached 150 entries, break out of the loop
                 if len(target_users) >= 150:
                     break
+
+            # If the target_users dictionary has reached 150 entries, break out of the loop
             if len(target_users) >= 150:
                 break
+
+        # Update the UIDs list with the new UIDs
         uids = new_uids
-        recurse_level-=1
+
+        # Decrement the recursion level
+        recurse_level -= 1
+
+    # Return the target_users dictionary
     return target_users
 
 def get_thumb_image_infos():

@@ -52,5 +52,5 @@ def extract_glb_metadata(file_path):
 
         return metadata
 # example usage:
-# metadata = extract_glb_metadata('coin.glb')
+# metadata = extract_glb_metadata('/Users/ebowwa/simulation/public/models/glb/picture_frame.glb')
 # print(metadata)
